@@ -1,7 +1,7 @@
 export const ChaliceStructures = {
     'Pthumeru' : {
         size : 4,
-        forms : [[1, 2, 3, 1], [1, 3, 2, 1]],
+        forms : [[1, 2, 3, 1], [1, 3, 2, 1]], // POSSIBILI DUE LIVELLI CON LO STESSO NUMERO DI STANZE, MAX DIFFERENZA DI 1 TRA DUE LIVELLI ADIACENTI
         effects : {
             0 : [{
                 title : 'Pthumeru Level 1 Title 1',

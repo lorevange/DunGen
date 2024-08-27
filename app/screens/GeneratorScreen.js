@@ -3,7 +3,8 @@ import { Colors } from '@/constants/Colors';
 import { useState, useEffect } from 'react';
 import DungeonLevel from '@/components/DungeonLevel';
 // import { ChaliceStructures } from '@/constants/Chalices';
-import { shuffle } from '@/utils/Utils';
+import { shuffle, generateRoutes } from '@/utils/Utils';
+import { useFonts } from 'expo-font';
 
 export default function GeneratorScreen({route, navigation}) {
 
@@ -26,7 +27,7 @@ export default function GeneratorScreen({route, navigation}) {
             }
         }
         console.log('GENERATED LEVELS :', levels);
-        setDungeonLevels(levels);
+        setDungeonLevels(generateRoutes(levels));
     }
 
     const renderDungeon = () => {
@@ -40,6 +41,10 @@ export default function GeneratorScreen({route, navigation}) {
     useEffect(() => {
         generateDungeon();
     }, []);
+
+    useFonts({
+        'dungen' : require('../../assets/fonts/DUNGRG.ttf'),
+    });
 
     return (
         <View style={styles.home}>
@@ -68,7 +73,8 @@ const styles = StyleSheet.create({
     title: {
         textAlign: 'center',
         fontWeight: 'bold',
-        fontSize: 40,
+        fontFamily: 'dungen',
+        fontSize: 60,
         marginVertical: 20, // Adds space between the title and the scroll view
     },
     scrollViewContent: {

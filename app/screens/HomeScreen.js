@@ -4,6 +4,7 @@ import { ChaliceStructures } from '@/constants/Chalices';
 import { postDungeon, fetchDungeon } from '@/utils/Http';
 import Loading from '@/components/Loading';
 import { useState, useEffect } from 'react';
+import { useFonts } from 'expo-font';
 
 export default function HomeScreen({navigation}) {
 
@@ -34,6 +35,10 @@ export default function HomeScreen({navigation}) {
         setLoading(false);
         //console.log(chaliceStructures);
     }, []);
+
+    useFonts({
+        'dungen' : require('../../assets/fonts/DUNGRG.ttf'),
+    });
 
     const renderLoading = () => {
         return <Loading/>;
@@ -86,7 +91,8 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 40
+    fontFamily: 'dungen',
+    fontSize: 120
   },
   buttonContainer: {
     alignItems: 'center',
