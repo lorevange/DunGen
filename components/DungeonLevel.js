@@ -6,7 +6,7 @@ export default function DungeonLevel({dungeonLevel}) {
     const renderRooms = () => {
         return dungeonLevel.map((room, index) => {
             return(
-                <DungeonRoom key={index} effectTitle={room} effectExplained='prova'/>
+                <DungeonRoom key={index} effectTitle={room.title} effectExplained={room.effect}/>
             );
         })
     }

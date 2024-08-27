@@ -1,20 +1,58 @@
 import { Image, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { postDungeon } from '@/utils/Http';
+import { ChaliceStructures } from '@/constants/Chalices';
+import { postDungeon, fetchDungeon } from '@/utils/Http';
+import Loading from '@/components/Loading';
+import { useState, useEffect } from 'react';
 
 export default function HomeScreen({navigation}) {
 
+    const [loading, setLoading] = useState(true);
+    const [chaliceStructures, setChaliceStructures] = useState();
     const chalices = [
         {id: 1, title: 'Pthumeru', levels : 4},
         {id: 2, title: 'Loran', levels : 5},
         {id: 3, title: 'Isz', levels : 6}
     ];
 
+    async function fetchBackend() {
+        destructureBackendData(await fetchDungeon());
+    }
+
+    const destructureBackendData = response => {
+        // get the last Dungeon Config returned by the backend
+        let tempData = {};
+        for(var key in response.data){
+            tempData = response.data[key];
+        }
+        setChaliceStructures(tempData);
+        console.log(chaliceStructures);
+    }
+
+    useEffect(() => {
+        fetchBackend();
+        setLoading(false);
+        //console.log(chaliceStructures);
+    }, []);
+
+    const renderLoading = () => {
+        return <Loading/>;
+    }
+
     const renderButtons = () => {
         return chalices.map((chalice) => {
             return (
                 <View key={chalice.id} style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.recButton} activeOpacity={0.6} onPress={() => navigation.navigate('Generator', {chalice: chalice})}>
+                    <TouchableOpacity 
+                        style={styles.recButton} 
+                        activeOpacity={0.6} 
+                        onPress={() => navigation.navigate(
+                            'Generator', 
+                            {
+                                chalice: chalice,
+                                chaliceStructures: chaliceStructures
+                            }
+                        )}>
                         <Text style={styles.buttonText}>Generate {chalice.title} Chalice</Text>
                     </TouchableOpacity>
                 </View>
@@ -27,7 +65,7 @@ export default function HomeScreen({navigation}) {
             <View>
                 <Text style={styles.title}>DUNGEN</Text>
             </View>
-            {renderButtons()}
+            {loading ? renderLoading() : renderButtons()}
             {/* <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.recButton} activeOpacity={0.6} onPress={() => postDungeon()}>
                     <Text style={styles.buttonText}>UPLOAD CHALICES</Text>

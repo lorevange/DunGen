@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function DungeonRoom({effectTitle, effectExplained}) {
-    console.log(effectTitle);
     return (
         <View style={styles.roomContainer}>
             <TouchableOpacity style={styles.touchArea}>

@@ -9,6 +9,6 @@ export function postDungeon() {
         ChaliceStructures);
 }
 
-export function fetchDungeon() {
-    axios.get(BACKEND_URL + '/dungeon.json');
+export async function fetchDungeon() {
+    return await axios.get(BACKEND_URL + '/dungeon.json');
 }

@@ -1,30 +1,31 @@
 import { ScrollView, StyleSheet, View, TouchableOpacity, Text, Dimensions } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { ChaliceStructures } from '@/constants/Chalices';
 import { useState, useEffect } from 'react';
 import DungeonLevel from '@/components/DungeonLevel';
+// import { ChaliceStructures } from '@/constants/Chalices';
 import { shuffle } from '@/utils/Utils';
 
 export default function GeneratorScreen({route, navigation}) {
 
-    const { chalice } = route.params;
+    const { chalice, chaliceStructures } = route.params;
     let currentLevel = 1;
-    const seed = Math.floor(Math.random() * 100) % ChaliceStructures[chalice.title].forms.length;
+    const seed = Math.floor(Math.random() * 100) % chaliceStructures[chalice.title].forms.length;
     
     const [dungeonLevels, setDungeonLevels] = useState([]);
 
     const generateDungeon = () => {
         const levels = [];
-        const form = ChaliceStructures[chalice.title].forms[seed];
+        const form = chaliceStructures[chalice.title].forms[seed];
         for(let j = 0; j < form.length; j++){
             levels.push([]);
             let numberOfRoomsInLevel = form[j];
-            let options = shuffle(ChaliceStructures[chalice.title].effects[j+1]);
+            let options = shuffle(chaliceStructures[chalice.title].effects[j]);
 
             for(let i = 0; i < numberOfRoomsInLevel; i++){
                 levels[j].push(options[i]);
             }
         }
+        console.log('GENERATED LEVELS :', levels);
         setDungeonLevels(levels);
     }
 
@@ -39,8 +40,6 @@ export default function GeneratorScreen({route, navigation}) {
     useEffect(() => {
         generateDungeon();
     }, []);
-
-    console.log(dungeonLevels);
 
     return (
         <View style={styles.home}>
