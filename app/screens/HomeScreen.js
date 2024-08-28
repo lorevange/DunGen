@@ -1,6 +1,5 @@
 import { Image, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { ChaliceStructures } from '@/constants/Chalices';
 import { postDungeon, fetchDungeon } from '@/utils/Http';
 import Loading from '@/components/Loading';
 import { useState, useEffect } from 'react';
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontFamily: 'dungen',
-    fontSize: 120
+    fontSize: 100
   },
   buttonContainer: {
     alignItems: 'center',

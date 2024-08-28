@@ -19,6 +19,7 @@ const seedMe = () => Math.floor(Math.random()*100);
 export const generateRoutes = (levels) => {
     const depth = levels.length;
     for(let i = 0; i < depth; i++){
+        levels[i].reaches = new Set([]);
         // if the last level is being evaluated (always only one room), then no route
         if(i + 1 == depth) {
             levels[i][0].left = false;
@@ -39,112 +40,76 @@ export const generateRoutes = (levels) => {
         else {
             const rooms = levels[i].length;
             const nextLevelRooms = levels[i+1].length;
-            for(let j = 0; j < rooms; j++){
-                // generate routes first (at least one route per room),
-                // + forced fix on extreme rooms
-                if(rooms == nextLevelRooms){
-                    // forced fix on extreme rooms
-                    // EXTREME LEFT first (ominous russian anthem plays...)
-                    if(j == 0){
-                        // set always FALSE to the left
-                        levels[i][j].left = false;
-                        let atLeastOneRoute = false;
-                        // cycle until you generate at least one route
-                        while(!atLeastOneRoute){
-                            if(!levels[i][j].mid && !levels[i][j].right){
-                                levels[i][j].mid = (seedMe() % 3) == 0;
-                                levels[i][j].right = (seedMe() % 3) == 0;
-                            } else {
-                                atLeastOneRoute = true;
-                            }
-                        }
-                    } else if(j == rooms-1){
-                        // set always FALSE to the right
-                        levels[i][j].right = false;
-                        let atLeastOneRoute = false;
-                        // cycle until you generate at least one route
-                        while(!atLeastOneRoute){
-                            if(!levels[i][j].left && !levels[i][j].mid){
-                                levels[i][j].left = (seedMe() % 3) == 0;
-                                levels[i][j].mid = (seedMe() % 3) == 0;
-                            } else {
-                                atLeastOneRoute = true;
-                            }
-                        }
-                    } else {
-                        // all the possibilities
-                        let atLeastOneRoute = false;
-                        while(!atLeastOneRoute){
-                            if(!levels[i][j].left && !levels[i][j].mid && !levels[i][j].right){
-                                levels[i][j].left = (seedMe() % 3) == 0;
-                                levels[i][j].mid = (seedMe() % 3) == 0;
-                                levels[i][j].right = (seedMe() % 3) == 0;
-                            } else {
-                                atLeastOneRoute = true;
-                            }
-                        }
-                    }
-                } else if(rooms > nextLevelRooms) {
-                    // mid is always false -- THERE'S ONLY ONE CASE IN WHICH IS THE ONLY ONE TRUE
-                    // PTHUMERU FORM 2 3rd LEVEL
-                    if(rooms - nextLevelRooms > 1){
-                        if(rooms - nextLevelRooms > 2){
-                            return [{title: 'Not a valid chalice template'}];
-                        }
-                        // max diff is 2 top to bottom
-                        if(rooms == 3){
-                            levels[i][0].left = false;
-                            levels[i][0].mid = false;
-                            levels[i][0].right = true;
-                            levels[i][1].left = false;
-                            levels[i][1].mid = true;
-                            levels[i][1].right = false;
-                            levels[i][2].left = true;
-                            levels[i][2].mid = false;
-                            levels[i][2].right = false;
-                        }
-                    }
-                    // forced fix on extreme rooms
-                    // MID ALWAYS FALSE IN THIS CASE
-                    levels[i][j].mid = false;
-                    // EXTREME LEFT first (ominous russian anthem plays...)
-                    if(j == 0){
-                        // cannot go left, then go right
-                        levels[i][j].left = false;
-                        levels[i][j].right = true;
-                    } else if(j == rooms-1){
-                        // cannot go right, then go left
-                        levels[i][j].left = true;
-                        levels[i][j].right = false;
-                    } else {
-                        // all the possibilities
-                        let atLeastOneRoute = false;
-                        while(!atLeastOneRoute){
-                            if(!levels[i][j].left && !levels[i][j].right){
-                                levels[i][j].left = (seedMe() % 3) == 0;
-                                levels[i][j].right = (seedMe() % 3) == 0;
-                            } else {
-                                atLeastOneRoute = true;
-                            }
-                        }
-                    }
-                } else {// this is the case (rooms < nextLevelRooms), can go anywhere
+            levels[i] = generateSingleLevel(levels[i], rooms, nextLevelRooms);
+        }
+    }
+    return levels;
+}
+
+const generateSingleLevel = (level, rooms, nextLevelRooms) => {
+    for(let j = 0; j < rooms; j++){
+        // generate routes first (at least one route per room),
+        // + forced fix on extreme rooms
+        if(rooms > nextLevelRooms) {
+            // mid is always false -- THERE'S ONLY ONE CASE IN WHICH IS THE ONLY ONE TRUE
+            // PTHUMERU FORM 2 3rd LEVEL
+            if(rooms - nextLevelRooms > 1){
+                if(rooms - nextLevelRooms > 2){
+                    return [{title: 'Not a valid chalice template'}];
+                }
+                // max diff is 2 top to bottom
+                if(rooms == 3){
+                    level[0].left = false;
+                    level[0].mid = false;
+                    level[0].right = true;
+                    level[1].left = false;
+                    level[1].mid = true;
+                    level[1].right = false;
+                    level[2].left = true;
+                    level[2].mid = false;
+                    level[2].right = false;
+                }
+            } else {
+                // forced fix on extreme rooms
+                // MID ALWAYS FALSE IN THIS CASE
+                level[j].mid = false;
+                // EXTREME LEFT first (ominous russian anthem plays...)
+                if(j == 0){
+                    // cannot go left, then go right
+                    level[j].left = false;
+                    level[j].right = true;
+                } else if(j == rooms-1){
+                    // cannot go right, then go left
+                    level[j].left = true;
+                    level[j].right = false;
+                } else {
                     // all the possibilities
                     let atLeastOneRoute = false;
                     while(!atLeastOneRoute){
-                        if(!levels[i][j].left && !levels[i][j].right){
-                            levels[i][j].left = (seedMe() % 3) == 0;
-                            levels[i][j].right = (seedMe() % 3) == 0;
+                        if(!level[j].left && !level[j].right){
+                            level[j].left = (seedMe() % 3) == 0;
+                            level[j].right = (seedMe() % 3) == 0;
                         } else {
                             atLeastOneRoute = true;
                         }
                     }
-                    // MUST somehow get to the farthest rooms
-                    levels[i][0].left = true;
-                    levels[i][rooms-1].right = true;
                 }
             }
+        } else {// this is the case (rooms < nextLevelRooms), can go anywhere
+            // all the possibilities
+            let atLeastOneRoute = false;
+            while(!atLeastOneRoute){
+                if(!level[j].left && !level[j].right){
+                    level[j].left = (seedMe() % 3) == 0;
+                    level[j].right = (seedMe() % 3) == 0;
+                } else {
+                    atLeastOneRoute = true;
+                }
+            }
+            // MUST somehow get to the farthest rooms
+            level[0].left = true;
+            level[rooms-1].right = true;
         }
     }
-    return levels;
+    return level;
 }
