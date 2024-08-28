@@ -15,9 +15,9 @@ export default function DungeonRoom({ effectTitle, effectExplained, left, mid, r
                 <Text style={styles.effectTitle}>{effectTitle}</Text>
                 <Text style={styles.effectExplained}>{effectExplained}</Text>
                 <View style={styles.arrowContainer}>
-                    {left && <Feather name="arrow-down-left" size={12} color="black" />}
-                    {mid && <Feather name="arrow-down" size={12} color="black" />}
-                    {right && <Feather name="arrow-down-right" size={12} color="black" />}
+                    {left && <Feather name="arrow-down-left" style={styles.arrow} />}
+                    {mid && <Feather name="arrow-down" style={styles.arrow} />}
+                    {right && <Feather name="arrow-down-right" style={styles.arrow} />}
                 </View>
             </TouchableOpacity>
         </View>
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     roomContainer: {
         alignItems: 'center', // Center content inside each DungeonRoom horizontally
         justifyContent: 'center', // Centers content vertically within the room
-        backgroundColor: '#f0f0f0', // Light grey background for visibility
+        backgroundColor: 'rgba(137,101,80,0.6)', // Light grey background for visibility
         borderColor: '#ccc',
         borderWidth: 1,
         marginHorizontal: 3, // Small margin for spacing between rooms
@@ -41,13 +41,15 @@ const styles = StyleSheet.create({
         padding: 10, // Add padding for content
     },
     effectTitle: {
+        color: '#F1F2E2',
         fontWeight: 'bold',
-        fontSize: 10, // Smaller font size for room titles
+        fontSize: 12, // Smaller font size for room titles
         textAlign: 'center', // Centers text
         flexShrink: 1,
     },
     effectExplained: {
-        fontSize: 9, // Smaller font size for room explanations
+        color: '#D7D8C2',
+        fontSize: 10, // Smaller font size for room explanations
         textAlign: 'center', // Centers text
         flexShrink: 1,
     },
@@ -58,4 +60,8 @@ const styles = StyleSheet.create({
         marginTop: 10, // Adjust margin top for spacing
         flexShrink: 1,
     },
+    arrow: {
+        size: 12,
+        color: '#F1F2E2'
+    }
 });

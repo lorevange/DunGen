@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
-const Loading = ({ size = 'large', color = '#0000ff' }) => {
+const Loading = ({ size = 'large', color = 'black' }) => {
   return (
     <View style={styles.container}>
       <ActivityIndicator size={size} color={color} />
@@ -15,8 +15,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5', // You can change the background color here
-  },
+    backgroundColor: 'rgba(52, 52, 52, 0.3)'// You can change the background color here
+  }
 });
 
 export default Loading;
