@@ -12,12 +12,14 @@ export default function DungeonRoom({ effectTitle, effectExplained, left, mid, r
     return (
         <View style={[styles.roomContainer, { width: roomWidth }]}>
             <TouchableOpacity style={styles.touchArea}>
-                <Text style={styles.effectTitle}>{effectTitle}</Text>
-                <Text style={styles.effectExplained}>{effectExplained}</Text>
+                <View style={styles.textContainer}>
+                    <Text style={styles.effectTitle}>{effectTitle}</Text>
+                    <Text style={styles.effectExplained}>{effectExplained}</Text>
+                </View>
                 <View style={styles.arrowContainer}>
-                    {left && <Feather name="arrow-down-left" style={styles.arrow} />}
-                    {mid && <Feather name="arrow-down" style={styles.arrow} />}
-                    {right && <Feather name="arrow-down-right" style={styles.arrow} />}
+                    {left && <Feather name="arrow-down-left" style={styles.arrow} size={20}/>}
+                    {mid && <Feather name="arrow-down" style={styles.arrow} size={20}/>}
+                    {right && <Feather name="arrow-down-right" style={styles.arrow} size={20}/>}
                 </View>
             </TouchableOpacity>
         </View>
@@ -40,6 +42,11 @@ const styles = StyleSheet.create({
         alignItems: 'center', // Centers text horizontally within the touch area
         padding: 10, // Add padding for content
     },
+    textContainer:{
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
     effectTitle: {
         color: '#F1F2E2',
         fontWeight: 'bold',
@@ -58,10 +65,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 10, // Adjust margin top for spacing
-        flexShrink: 1,
     },
     arrow: {
-        size: 12,
         color: '#F1F2E2'
     }
 });

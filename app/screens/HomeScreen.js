@@ -57,7 +57,7 @@ export default function HomeScreen({navigation}) {
                                 chaliceStructures: chaliceStructures
                             }
                         )}>
-                        <Text style={styles.buttonText}>Generate {chalice.title} Chalice</Text>
+                        <Text style={styles.buttonText}>{chalice.title} Chalice</Text>
                     </TouchableOpacity>
                 </View>
             );
@@ -70,17 +70,18 @@ export default function HomeScreen({navigation}) {
             style={styles.background}
             resizeMode="cover" // or 'contain' depending on the desired scaling
         >
+        {loading ? renderLoading() : (
             <View style={styles.home}>
-                <View>
-                    <Text style={styles.title}>DUNGEN</Text>
-                </View>
-                {loading ? renderLoading() : renderButtons()}
+                <Text style={styles.title}>DUNGEN</Text>
+                <Text style={styles.helpText}>Tap to generate</Text>
+                {renderButtons()}
                 {/* <View style={styles.buttonContainer}>
                     <TouchableOpacity style={styles.recButton} activeOpacity={0.6} onPress={() => postDungeon()}>
                         <Text style={styles.buttonText}>UPLOAD CHALICES</Text>
                     </TouchableOpacity>
                 </View> */}
             </View>
+            )}
         </ImageBackground>
     );
 }
@@ -108,6 +109,16 @@ const styles = StyleSheet.create({
         fontSize: 100,
         marginBottom: 30,  // Added margin below the title to separate it from the buttons
     },
+    helpText: {
+        textAlign: 'center',
+        fontFamily: 'dungen',
+        color: '#E9D7D6',  // Light color to contrast against the shadow
+        textShadowColor: 'rgba(0, 0, 0, 1)',  // Darker shadow for better visibility
+        textShadowOffset: { width: 2, height: 2 },  // More offset for a more visible shadow
+        textShadowRadius: 12,  // Increased radius for a smoother shadow
+        fontSize: 30,
+        marginBottom: 30, 
+    },
     buttonContainer: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -124,9 +135,9 @@ const styles = StyleSheet.create({
         marginVertical: 5,  // Reduced vertical margin to place buttons closer to each other
     },
     buttonText: {
-        color: '#fff',
         textAlign: 'center',
         fontWeight: 'bold',
+        color: '#fff',  // Light color to contrast against the shadow
         fontSize: 15,
         margin: 5,
     },

@@ -40,13 +40,52 @@ export const generateRoutes = (levels) => {
         else {
             const rooms = levels[i].length;
             const nextLevelRooms = levels[i+1].length;
-            levels[i] = generateSingleLevel(levels[i], rooms, nextLevelRooms);
+            const roomsDiff = nextLevelRooms - rooms;
+            const delta = Math.abs(roomsDiff % 2) == 1 ? 1 : 2;
+            //console.log('rooms, nextLevelRooms, roomsDiff, delta', rooms, nextLevelRooms, roomsDiff, delta);
+            let nextLevelRoomsReached = {}
+            let allRoomsReachable = false;
+            let maxIterationCounter = 0;
+            while(!allRoomsReachable){
+                if(++maxIterationCounter > 1000){
+                    console.log('Max iterations reached!');
+                    alert('pippo');
+                    break;
+                }
+                for(let y = 0; y < nextLevelRooms; y++){
+                    nextLevelRoomsReached[y] = false;
+                }
+                levels[i] = generateSingleLevel(levels[i], rooms, nextLevelRooms);
+                for(let j = 0; j < rooms; j++){
+                    //console.log('inside control loop index ', j);
+                    if(levels[i][j].left){
+                        const indexOfReachedRoom = j + (roomsDiff - delta)/2;
+                        nextLevelRoomsReached[indexOfReachedRoom] = true;
+                        //console.log('indexOfReachedRoom ', indexOfReachedRoom);
+                    }
+                    if(levels[i][j].right){
+                        const indexOfReachedRoom = j + (roomsDiff + delta)/2;
+                        nextLevelRoomsReached[indexOfReachedRoom] = true;
+                        //console.log('indexOfReachedRoom ', indexOfReachedRoom);
+                    }
+                }
+                for(let j = 0; j < nextLevelRooms; j++){
+                    if(nextLevelRoomsReached[j]){
+                        allRoomsReachable = true;
+                    } else {
+                        allRoomsReachable = false;
+                        break;
+                    }
+                }
+                console.log('nextLevelRoomsReached ', nextLevelRoomsReached);
+            }
         }
     }
     return levels;
 }
 
 const generateSingleLevel = (level, rooms, nextLevelRooms) => {
+    level = refreshRoutes(level);
     for(let j = 0; j < rooms; j++){
         // generate routes first (at least one route per room),
         // + forced fix on extreme rooms
@@ -110,6 +149,15 @@ const generateSingleLevel = (level, rooms, nextLevelRooms) => {
             level[0].left = true;
             level[rooms-1].right = true;
         }
+    }
+    return level;
+}
+
+const refreshRoutes = (level) => {
+    for(let i = 0; i < level.length; i++){
+        level[i].left = false;
+        level[i].mid = false;
+        level[i].right = false;
     }
     return level;
 }
