@@ -2,10 +2,10 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
-const Loading = ({ size = 'large', color = 'black' }) => {
+const Loading = ({ size = 'large' }) => {
   return (
     <View style={styles.container}>
-      <ActivityIndicator size={size} color={color} />
+      <ActivityIndicator size={size} color={'#fff'} />
     </View>
   );
 };

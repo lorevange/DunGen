@@ -17,6 +17,7 @@ export const shuffle = (array) => {
 const seedMe = () => Math.floor(Math.random()*100);
 
 export const generateRoutes = (levels) => {
+    // console.log('IN GENERATE ROUTES LEVELS: ', levels);
     const depth = levels.length;
     for(let i = 0; i < depth; i++){
         levels[i].reaches = new Set([]);
@@ -41,15 +42,15 @@ export const generateRoutes = (levels) => {
             const rooms = levels[i].length;
             const nextLevelRooms = levels[i+1].length;
             const roomsDiff = nextLevelRooms - rooms;
-            const delta = Math.abs(roomsDiff % 2) == 1 ? 1 : 2;
-            //console.log('rooms, nextLevelRooms, roomsDiff, delta', rooms, nextLevelRooms, roomsDiff, delta);
+            const p = Math.abs(roomsDiff % 2) == 1 ? 1 : 2;
+            //console.log('rooms, nextLevelRooms, roomsDiff, p', rooms, nextLevelRooms, roomsDiff, p);
             let nextLevelRoomsReached = {}
             let allRoomsReachable = false;
             let maxIterationCounter = 0;
             while(!allRoomsReachable){
                 if(++maxIterationCounter > 1000){
                     console.log('Max iterations reached!');
-                    alert('pippo');
+                    alert('Max iterations reached!\nTry again.');
                     break;
                 }
                 for(let y = 0; y < nextLevelRooms; y++){
@@ -59,12 +60,12 @@ export const generateRoutes = (levels) => {
                 for(let j = 0; j < rooms; j++){
                     //console.log('inside control loop index ', j);
                     if(levels[i][j].left){
-                        const indexOfReachedRoom = j + (roomsDiff - delta)/2;
+                        const indexOfReachedRoom = j + (roomsDiff - p)/2;
                         nextLevelRoomsReached[indexOfReachedRoom] = true;
                         //console.log('indexOfReachedRoom ', indexOfReachedRoom);
                     }
                     if(levels[i][j].right){
-                        const indexOfReachedRoom = j + (roomsDiff + delta)/2;
+                        const indexOfReachedRoom = j + (roomsDiff + p)/2;
                         nextLevelRoomsReached[indexOfReachedRoom] = true;
                         //console.log('indexOfReachedRoom ', indexOfReachedRoom);
                     }
@@ -77,7 +78,7 @@ export const generateRoutes = (levels) => {
                         break;
                     }
                 }
-                console.log('nextLevelRoomsReached ', nextLevelRoomsReached);
+                //console.log('nextLevelRoomsReached ', nextLevelRoomsReached);
             }
         }
     }
@@ -160,4 +161,93 @@ const refreshRoutes = (level) => {
         level[i].right = false;
     }
     return level;
+}
+
+export const goToNextLevel = (dungeonLevels, levelNumber, selectedIndex, path) => {
+    path.push(selectedIndex);
+    dungeonLevels[levelNumber][selectedIndex].selected = true;
+    dungeonLevels[levelNumber][selectedIndex].current = true;
+
+    if(levelNumber != 0) {
+        dungeonLevels[levelNumber - 1][path[path.length - 2]].current = false;
+    }
+
+    dungeonLevels[levelNumber].forEach(room => {
+        if(room.index != selectedIndex){
+            room.accessible = false;
+            room.selectable = false;
+        }
+    });
+    if(levelNumber != dungeonLevels.length - 1){
+        // se è l'ultima stanza, skip controllo
+        // da fare solo per le stanze raggiungibili da quella precedente
+        let reachableRooms = [];
+        const roomsDiff = dungeonLevels[levelNumber + 1].length - dungeonLevels[levelNumber].length;
+        const p = Math.abs(roomsDiff % 2) == 1 ? 1 : 2;
+        const indexOfReachedLeft = selectedIndex + (roomsDiff - p)/2;
+        const indexOfReachedMid = selectedIndex + roomsDiff/2;
+        const indexOfReachedRight = selectedIndex + (roomsDiff + p)/2;
+        if(dungeonLevels[levelNumber][selectedIndex].left) reachableRooms.push(indexOfReachedLeft);
+        if(dungeonLevels[levelNumber][selectedIndex].mid) reachableRooms.push(indexOfReachedMid);
+        if(dungeonLevels[levelNumber][selectedIndex].right) reachableRooms.push(indexOfReachedRight);
+    
+        reachableRooms.forEach(index => {
+            dungeonLevels[levelNumber + 1][index].accessible = true;
+            dungeonLevels[levelNumber + 1][index].selectable = true;
+        });
+    }
+
+    return {
+        dungeonLevels : dungeonLevels,
+        path : path
+    };
+}
+
+export const goToPreviousLevel = (dungeonLevels, levelNumber, path) => {
+    dungeonLevels[levelNumber][path[path.length - 1]].selected = false;
+    dungeonLevels[levelNumber][path[path.length - 1]].current = false;
+    path.pop();
+    console.log(dungeonLevels[levelNumber][path[path.length - 1]]);
+
+    if(levelNumber == 0){
+        dungeonLevels[levelNumber + 1].forEach(room => {
+            room.accessible = false;
+            room.selectable = false;
+        });
+        return {
+            dungeonLevels : dungeonLevels,
+            path : path
+        }
+    }
+    // da fare solo per le stanze raggiungibili da quella precedente
+    const previousIndex = path[path.length - 1];
+    dungeonLevels[levelNumber - 1][previousIndex].current = true;
+
+    let reachableRooms = [];
+    const roomsDiff = dungeonLevels[levelNumber].length - dungeonLevels[levelNumber - 1].length;
+    const p = Math.abs(roomsDiff % 2) == 1 ? 1 : 2;
+    const indexOfReachedLeft = previousIndex + (roomsDiff - p)/2;
+    const indexOfReachedMid = previousIndex + roomsDiff/2;
+    const indexOfReachedRight = previousIndex + (roomsDiff + p)/2;
+    if(dungeonLevels[levelNumber - 1][previousIndex].left) reachableRooms.push(indexOfReachedLeft);
+    if(dungeonLevels[levelNumber - 1][previousIndex].mid) reachableRooms.push(indexOfReachedMid);
+    if(dungeonLevels[levelNumber - 1][previousIndex].right) reachableRooms.push(indexOfReachedRight);
+
+    console.log(reachableRooms);
+    reachableRooms.forEach(index => {
+        dungeonLevels[levelNumber][index].accessible = true;
+        dungeonLevels[levelNumber][index].selectable = true;
+    });
+
+    if(levelNumber != dungeonLevels.length - 1){
+        dungeonLevels[levelNumber + 1].forEach(room => {
+            room.accessible = false;
+            room.selectable = false;
+        });
+    }
+
+    return {
+        dungeonLevels : dungeonLevels,
+        path : path
+    };
 }

@@ -1,29 +1,33 @@
-import { View, StyleSheet, Text, TouchableOpacity, ImageBackground, ScrollView } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { View, StyleSheet, Text, TouchableOpacity, ImageBackground, ScrollView, Dimensions } from 'react-native';
 import { useState, useEffect } from 'react';
 import DungeonLevel from '@/components/DungeonLevel';
-import { shuffle, generateRoutes } from '@/utils/Utils';
+import { shuffle, generateRoutes, goToNextLevel, goToPreviousLevel } from '@/utils/Utils';
 import { useFonts } from 'expo-font';
 import Loading from '@/components/Loading';
+import Room from '../classes/Room';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function GeneratorScreen({ route, navigation }) {
     const { chalice, chaliceStructures } = route.params;
     const seed = Math.floor(Math.random() * 100) % chaliceStructures[chalice.title].forms.length;
     const [dungeonLevels, setDungeonLevels] = useState([]);
     const [loading, setLoading] = useState(true);
-    let srcImg; 
+    const [currentLevel, setCurrentLevel] = useState(0);
+    const [path, setPath] = useState([]);
+    let srcImg = require('../../assets/images/homeBackground.jpg'); 
     
-    switch (chalice.title){
-        case 'Pthumeru':
-            srcImg = require('../../assets/images/PTHUMERU.jpg');
-            break;
-        case 'Loran':
-            srcImg = require('../../assets/images/LORAN.jpg');
-            break;
-        case 'Isz':
-            srcImg = require('../../assets/images/ISZ.jpg');
-            break;
-    }
+    // switch (chalice.title){
+    //     case 'Pthumeru':
+    //         srcImg = require('../../assets/images/PTHUMERU.jpg');
+    //         break;
+    //     case 'Loran':
+    //         srcImg = require('../../assets/images/LORAN.jpg');
+    //         break;
+    //     case 'Isz':
+    //         srcImg = require('../../assets/images/ISZ.jpg');
+    //         break;
+    // }
 
     const generateDungeon = () => {
         const levels = [];
@@ -34,8 +38,9 @@ export default function GeneratorScreen({ route, navigation }) {
             let options = shuffle(chaliceStructures[chalice.title].effects[j]);
 
             for (let i = 0; i < numberOfRoomsInLevel; i++) {
-                options[i].visited = false;
-                levels[j].push(options[i]);
+                let newRoom = new Room(options[i], j, i);
+                //console.log('room' + i + ' selectable ', newRoom.selectable);
+                levels[j].push(newRoom);
             }
         }
         //console.log('GENERATED LEVELS :', levels);
@@ -44,6 +49,22 @@ export default function GeneratorScreen({ route, navigation }) {
 
     const renderLoading = () => {
         return <Loading/>;
+    }
+
+    const changeLevelGeneratorScreen = (levelNumber, selectedIndex) => {
+        if(currentLevel == levelNumber) {
+            setCurrentLevel(currentLevel + 1);
+            const response = goToNextLevel(dungeonLevels, levelNumber, selectedIndex, path);
+            setDungeonLevels(response.dungeonLevels);
+            setPath(response.path);            
+        } else if(currentLevel == levelNumber + 1) {
+            setCurrentLevel(currentLevel - 1);
+            const response = goToPreviousLevel(dungeonLevels, levelNumber, path);
+            setDungeonLevels(response.dungeonLevels);
+            setPath(response.path);
+        }
+        console.log(currentLevel);
+        console.log(path);
     }
 
     useEffect(() => {
@@ -65,7 +86,12 @@ export default function GeneratorScreen({ route, navigation }) {
                 horizontal={false}>
                     <View style={styles.levelsContainer}>
                         {dungeonLevels.map((level, index) => (
-                            <DungeonLevel key={index} dungeonLevel={level} style={styles.dungeonLevel} />
+                            <DungeonLevel 
+                                key={index}
+                                level={level}
+                                currentLevel={currentLevel}
+                                changeLevel={changeLevelGeneratorScreen}
+                                style={styles.dungeonLevel} />
                         ))}
                     </View>
                 </ScrollView>
@@ -96,15 +122,14 @@ export default function GeneratorScreen({ route, navigation }) {
 const styles = StyleSheet.create({
     background: {
         flex: 1, // Ensures the background image covers the whole screen
-        width: '100%',
+        width: SCREEN_WIDTH,
         height: '100%'
     },
     home: {
         flex: 1,
-        width: '100%',
+        width: SCREEN_WIDTH,
         alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 20
+        justifyContent: 'center'
     },
     title: {
         textAlign: 'center',
@@ -116,21 +141,17 @@ const styles = StyleSheet.create({
     },
     scrollView:{
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        width: '100%',
-        paddingHorizontal: 10
+        justifyContent: 'center',
+        width: SCREEN_WIDTH,
+        flexGrow: 1
     },
     levelsContainer: {
-        flexGrow: 1,
-        width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
         marginLeft: 0,
         padding: 0
     },
     dungeonLevel: {
-        flex: 1,
-        width: '100%',
         alignItems: 'center'
     },
     buttonContainer: {
