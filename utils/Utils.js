@@ -207,7 +207,7 @@ export const goToPreviousLevel = (dungeonLevels, levelNumber, path) => {
     dungeonLevels[levelNumber][path[path.length - 1]].selected = false;
     dungeonLevels[levelNumber][path[path.length - 1]].current = false;
     path.pop();
-    console.log(dungeonLevels[levelNumber][path[path.length - 1]]);
+    // console.log(dungeonLevels[levelNumber][path[path.length - 1]]);
 
     if(levelNumber == 0){
         dungeonLevels[levelNumber + 1].forEach(room => {
@@ -233,7 +233,7 @@ export const goToPreviousLevel = (dungeonLevels, levelNumber, path) => {
     if(dungeonLevels[levelNumber - 1][previousIndex].mid) reachableRooms.push(indexOfReachedMid);
     if(dungeonLevels[levelNumber - 1][previousIndex].right) reachableRooms.push(indexOfReachedRight);
 
-    console.log(reachableRooms);
+    // console.log(reachableRooms);
     reachableRooms.forEach(index => {
         dungeonLevels[levelNumber][index].accessible = true;
         dungeonLevels[levelNumber][index].selectable = true;

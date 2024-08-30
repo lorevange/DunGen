@@ -26,7 +26,7 @@ export default function HomeScreen({navigation}) {
             tempData = response.data[key];
         }
         setChaliceStructures(tempData);
-        console.log(chaliceStructures);
+        // console.log(chaliceStructures);
     }
 
     useEffect(() => {

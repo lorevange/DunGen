@@ -63,8 +63,8 @@ export default function GeneratorScreen({ route, navigation }) {
             setDungeonLevels(response.dungeonLevels);
             setPath(response.path);
         }
-        console.log(currentLevel);
-        console.log(path);
+        // console.log(currentLevel);
+        // console.log(path);
     }
 
     useEffect(() => {
