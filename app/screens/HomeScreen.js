@@ -8,6 +8,9 @@ import { useFonts } from 'expo-font';
 export default function HomeScreen({navigation}) {
 
     const [loading, setLoading] = useState(true);
+    const [isFontLoaded] = useFonts({
+        'dungen' : require('../../assets/fonts/DUNGRG.ttf'),
+    });
     const [chaliceStructures, setChaliceStructures] = useState();
     const chalices = [
         {id: 1, title: 'Pthumeru', levels : 4},
@@ -35,9 +38,7 @@ export default function HomeScreen({navigation}) {
         //console.log(chaliceStructures);
     }, []);
 
-    useFonts({
-        'dungen' : require('../../assets/fonts/DUNGRG.ttf'),
-    });
+    
 
     const renderLoading = () => {
         return <Loading/>;
@@ -70,7 +71,7 @@ export default function HomeScreen({navigation}) {
             style={styles.background}
             resizeMode="cover" // or 'contain' depending on the desired scaling
         >
-        {loading ? renderLoading() : (
+        {loading || !isFontLoaded ? renderLoading() : (
             <View style={styles.home}>
                 <Text style={styles.title}>DUNGEN</Text>
                 <Text style={styles.helpText}>Tap to generate</Text>
@@ -100,7 +101,6 @@ const styles = StyleSheet.create({
     },
     title: {
         textAlign: 'center',
-        fontWeight: 'bold',
         fontFamily: 'dungen',
         color: '#E9D7D6',  // Light color to contrast against the shadow
         textShadowColor: 'rgba(0, 0, 0, 1)',  // Darker shadow for better visibility

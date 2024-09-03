@@ -15,6 +15,9 @@ export default function GeneratorScreen({ route, navigation }) {
     const [loading, setLoading] = useState(true);
     const [currentLevel, setCurrentLevel] = useState(0);
     const [path, setPath] = useState([]);
+    const [isFontLoaded] = useFonts({
+        'dungen' : require('../../assets/fonts/DUNGRG.ttf'),
+    });
     let srcImg = require('../../assets/images/homeBackground.jpg'); 
     
     // switch (chalice.title){
@@ -72,10 +75,6 @@ export default function GeneratorScreen({ route, navigation }) {
         setTimeout(() => setLoading(false), 1000);        
     }, []);
 
-    useFonts({
-        'dungen': require('../../assets/fonts/DUNGRG.ttf'),
-    });
-
     const renderPage = () => {
         return (
             <View style={styles.home}>
@@ -114,7 +113,7 @@ export default function GeneratorScreen({ route, navigation }) {
             style={styles.background}
             resizeMode="cover" // or 'contain' depending on the desired scaling
             >
-            {loading ? renderLoading() : renderPage()}
+            {loading || !isFontLoaded ? renderLoading() : renderPage()}
         </ImageBackground>
     );
 }
@@ -133,7 +132,6 @@ const styles = StyleSheet.create({
     },
     title: {
         textAlign: 'center',
-        fontWeight: 'bold',
         fontFamily: 'dungen',
         fontSize: 36,
         marginTop: 40,
