@@ -14,8 +14,6 @@ export const shuffle = (array) => {
     return array;
 }
 
-const seedMe = () => Math.floor(Math.random()*100);
-
 export const generateRoutes = (levels) => {
     // console.log('IN GENERATE ROUTES LEVELS: ', levels);
     const depth = levels.length;
@@ -127,8 +125,8 @@ const generateSingleLevel = (level, rooms, nextLevelRooms) => {
                     let atLeastOneRoute = false;
                     while(!atLeastOneRoute){
                         if(!level[j].left && !level[j].right){
-                            level[j].left = (seedMe() % 3) == 0;
-                            level[j].right = (seedMe() % 3) == 0;
+                            level[j].left = Math.random() < 0.8;
+                            level[j].right = Math.random() < 0.8;
                         } else {
                             atLeastOneRoute = true;
                         }
@@ -140,8 +138,8 @@ const generateSingleLevel = (level, rooms, nextLevelRooms) => {
             let atLeastOneRoute = false;
             while(!atLeastOneRoute){
                 if(!level[j].left && !level[j].right){
-                    level[j].left = (seedMe() % 3) == 0;
-                    level[j].right = (seedMe() % 3) == 0;
+                    level[j].left = Math.random() < 0.8;
+                    level[j].right = Math.random() < 0.8;
                 } else {
                     atLeastOneRoute = true;
                 }
